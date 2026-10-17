@@ -1,0 +1,24 @@
+{
+  "failures": [
+    {
+      "serviceId": "user-service",
+      "env": "dev",
+      "ip": "10.4.3.7",
+      "time": "2026-10-17 09:40:00",
+      "phase": "PORT_BIND",
+      "error": "Port 8081 was already in use",
+      "logExcerpt": "org.apache.catalina.LifecycleException: service.name [Tomcat] failed to start ... Web server failed to start. Port 8081 was already in use",
+      "suggestion": "端口被占用：执行 lsof -i:8081 找到占用进程，或修改 server.port 后重启"
+    },
+    {
+      "serviceId": "notify-service",
+      "env": "stage",
+      "ip": "10.5.2.1",
+      "time": "2026-10-16 18:20:00",
+      "phase": "APOLLO_CONFIG",
+      "error": "Could not load config for namespace application",
+      "logExcerpt": "com.ctrip.framework.apollo.exceptions.ApolloConfigException: Could not load config for namespace application ... Connect to apollo-meta.ddmc.internal:8080 timed out",
+      "suggestion": "Apollo 配置中心连不上：检查 apollo.meta 地址与网络连通性（stage 环境网络策略最近有变更）"
+    }
+  ]
+}

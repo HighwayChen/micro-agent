@@ -1,0 +1,19 @@
+{
+  "inventory-service": {
+    "10.2.3.4": {
+      "cpu": "92%",
+      "heapUsedMb": 3810,
+      "heapMaxMb": 4096,
+      "gcCountLast1h": 156,
+      "gcTimeLast1hMs": 84200,
+      "threadCount": 412,
+      "liveThreadPeak": 440,
+      "note": "CPU 与 GC 均异常：YoungGC 频率 2.6 次/分钟，每次约 540ms"
+    },
+    "10.2.3.5": {"cpu": "35%", "heapUsedMb": 1210, "heapMaxMb": 4096, "gcCountLast1h": 21, "gcTimeLast1hMs": 8100, "threadCount": 210},
+    "10.2.3.6": {"cpu": "30%", "heapUsedMb": 1100, "heapMaxMb": 4096, "gcCountLast1h": 18, "gcTimeLast1hMs": 7200, "threadCount": 205}
+  },
+  "order-service": {
+    "10.1.1.1": {"cpu": "38%", "heapUsedMb": 812, "heapMaxMb": 4096, "gcCountLast1h": 23, "gcTimeLast1hMs": 18400, "threadCount": 260}
+  }
+}

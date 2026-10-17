@@ -1,0 +1,75 @@
+2026-10-17 10:15:32
+Full thread dump OpenJDK 64-Bit Server VM (17.0.11 mixed mode):
+
+"inventory-rpc-worker-1" #41 daemon prio=5 os_prio=31 cpu=98231.24ms elapsed=3620.10s tid=0x00007f8e0b0a1800 nid=0x5f03 runnable
+   java.lang.Thread.State: RUNNABLE
+	at com.ddmc.soa.rpc.client.RpcClient.doInvoke(RpcClient.java:118)
+	at com.ddmc.soa.rpc.client.RpcClient.invoke(RpcClient.java:92)
+	at jdk.internal.reflect.GeneratedMethodAccessorImpl.invoke(Unknown Source)
+	at com.ddmc.inventory.service.StockDeductService.deduct(StockDeductService.java:87)
+	at com.ddmc.inventory.controller.StockFacadeImpl.deduct(StockFacadeImpl.java:45)
+	at com.ddmc.soa.rpc.server.ProviderProcessor.process(ProviderProcessor.java:210)
+	at com.ddmc.soa.rpc.server.WorkerThread.run(WorkerThread.java:88)
+
+"inventory-rpc-worker-2" #42 daemon prio=5 os_prio=31 cpu=97110.02ms elapsed=3620.10s tid=0x00007f8e0b0a1900 nid=0x5f04 runnable
+   java.lang.Thread.State: RUNNABLE
+	at com.ddmc.soa.rpc.client.RpcClient.doInvoke(RpcClient.java:118)
+	at com.ddmc.soa.rpc.client.RpcClient.invoke(RpcClient.java:92)
+	at jdk.internal.reflect.GeneratedMethodAccessorImpl.invoke(Unknown Source)
+	at com.ddmc.inventory.service.StockDeductService.deduct(StockDeductService.java:87)
+	at com.ddmc.inventory.controller.StockFacadeImpl.deduct(StockFacadeImpl.java:45)
+	at com.ddmc.soa.rpc.server.ProviderProcessor.process(ProviderProcessor.java:210)
+	at com.ddmc.soa.rpc.server.WorkerThread.run(WorkerThread.java:88)
+
+"inventory-rpc-worker-3" #43 daemon prio=5 os_prio=31 cpu=99520.18ms elapsed=3620.10s tid=0x00007f8e0b0a1a00 nid=0x5f05 runnable
+   java.lang.Thread.State: RUNNABLE
+	at com.ddmc.soa.rpc.client.RpcClient.doInvoke(RpcClient.java:118)
+	at com.ddmc.soa.rpc.client.RpcClient.invoke(RpcClient.java:92)
+	at jdk.internal.reflect.GeneratedMethodAccessorImpl.invoke(Unknown Source)
+	at com.ddmc.inventory.service.StockDeductService.deduct(StockDeductService.java:87)
+	at com.ddmc.inventory.controller.StockFacadeImpl.deduct(StockFacadeImpl.java:45)
+	at com.ddmc.soa.rpc.server.ProviderProcessor.process(ProviderProcessor.java:210)
+	at com.ddmc.soa.rpc.server.WorkerThread.run(WorkerThread.java:88)
+
+"inventory-rpc-worker-4" #44 daemon prio=5 os_prio=31 cpu=96875.55ms elapsed=3620.10s tid=0x00007f8e0b0a1b00 nid=0x5f06 runnable
+   java.lang.Thread.State: RUNNABLE
+	at com.ddmc.soa.rpc.client.RpcClient.doInvoke(RpcClient.java:118)
+	at com.ddmc.soa.rpc.client.RpcClient.invoke(RpcClient.java:92)
+	at jdk.internal.reflect.GeneratedMethodAccessorImpl.invoke(Unknown Source)
+	at com.ddmc.inventory.service.StockDeductService.deduct(StockDeductService.java:87)
+	at com.ddmc.inventory.controller.StockFacadeImpl.deduct(StockFacadeImpl.java:45)
+	at com.ddmc.soa.rpc.server.ProviderProcessor.process(ProviderProcessor.java:210)
+	at com.ddmc.soa.rpc.server.WorkerThread.run(WorkerThread.java:88)
+
+"db-check-safety-validator" #61 prio=5 os_prio=31 cpu=89012.40ms elapsed=3615.22s tid=0x00007f8e0c111800 nid=0x6103 waiting on condition
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(Native Method)
+	at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:252)
+	at com.zaxxer.hikari.util.ConcurrentBag.borrow(ConcurrentBag.java:87)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:169)
+	at com.ddmc.inventory.dao.StockDao.queryForUpdate(StockDao.java:66)
+	at com.ddmc.inventory.service.OversellGuard.validate(OversellGuard.java:44)
+	at com.ddmc.inventory.service.StockDeductService.deduct(StockDeductService.java:90)
+	at com.ddmc.inventory.controller.StockFacadeImpl.deduct(StockFacadeImpl.java:45)
+	at com.ddmc.soa.rpc.server.ProviderProcessor.process(ProviderProcessor.java:210)
+	at com.ddmc.soa.rpc.server.WorkerThread.run(WorkerThread.java:88)
+
+"hikari-pool-monitor" #52 daemon prio=5 os_prio=31 cpu=120.10ms elapsed=3620.10s tid=0x00007f8e0b0ff00 nid=0x5f0a waiting on condition
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(Native Method)
+	at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:252)
+	at com.zaxxer.hikari.HikariPool$PoolEntryCreator.call(HikariPool.java:680)
+
+"orderTimeoutScanTask-scheduler-1" #71 prio=5 os_prio=31 cpu=4500.30ms elapsed=3600.00s tid=0x00007f8e0d200800 nid=0x6a01 waiting on condition
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(Native Method)
+	at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:252)
+	at com.ddmc.soa.rpc.client.RpcClient.awaitResult(RpcClient.java:210)
+	at com.ddmc.inventory.service.InventoryClientWrapper.deduct(InventoryClientWrapper.java:33)
+
+"http-nio-8080-exec-3" #25 prio=5 os_prio=31 cpu=2100.00ms elapsed=3620.10s tid=0x00007f8e0a012000 nid=0x5303 waiting on condition
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(Native Method)
+	at java.util.concurrent.locks.LockSupport.park(LockSupport.java:186)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:883)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1092)

@@ -1,0 +1,18 @@
+{
+  "inventory-service": {
+    "10.2.3.4": [
+      {"name": "stockSyncTask", "cron": "0 */5 * * * ?", "state": "RUNNING", "lastExecCostMs": 18200, "note": "库存对账同步，最近一次耗时显著上升（上周约 2000ms）"},
+      {"name": "cacheRefreshTask", "cron": "0 */1 * * * ?", "state": "RUNNING", "lastExecCostMs": 850}
+    ],
+    "10.2.3.5": [
+      {"name": "stockSyncTask", "cron": "0 */5 * * * ?", "state": "RUNNING", "lastExecCostMs": 2100},
+      {"name": "cacheRefreshTask", "cron": "0 */1 * * * ?", "state": "RUNNING", "lastExecCostMs": 800}
+    ]
+  },
+  "order-service": {
+    "10.1.1.1": [
+      {"name": "orderTimeoutScanTask", "cron": "0 */1 * * * ?", "state": "RUNNING", "lastExecCostMs": 3400, "note": "超时关单扫描，积压 2300 单"},
+      {"name": "orderArchiveTask", "cron": "0 0 3 * * ?", "state": "IDLE"}
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "order-service": {
+    "prod": [
+      {"ip": "10.1.1.1", "hostname": "order-01", "status": "HEALTHY", "online": true, "weight": 100, "version": "v1.8.0", "startupTime": "2026-10-01 03:12:00"},
+      {"ip": "10.1.1.2", "hostname": "order-02", "status": "HEALTHY", "online": true, "weight": 100, "version": "v1.8.0", "startupTime": "2026-10-01 03:15:00"},
+      {"ip": "10.1.1.3", "hostname": "order-03", "status": "HEALTHY", "online": true, "weight": 100, "version": "v1.8.0", "startupTime": "2026-10-09 11:20:00"}
+    ],
+    "stage": [
+      {"ip": "10.1.2.1", "hostname": "order-stg-01", "status": "HEALTHY", "online": true, "weight": 100, "version": "v1.8.0", "startupTime": "2026-10-12 09:00:00"}
+    ]
+  },
+  "inventory-service": {
+    "prod": [
+      {"ip": "10.2.3.4", "hostname": "inv-01", "status": "UNHEALTHY", "online": true, "weight": 100, "version": "v2.3.1", "startupTime": "2026-10-14 16:40:00", "note": "健康检查连续失败 5 次，P99 4500ms"},
+      {"ip": "10.2.3.5", "hostname": "inv-02", "status": "HEALTHY", "online": true, "weight": 100, "version": "v2.3.1", "startupTime": "2026-10-14 16:42:00"},
+      {"ip": "10.2.3.6", "hostname": "inv-03", "status": "HEALTHY", "online": true, "weight": 100, "version": "v2.3.0", "startupTime": "2026-09-28 10:00:00"}
+    ],
+    "stage": [
+      {"ip": "10.2.4.1", "hostname": "inv-stg-01", "status": "HEALTHY", "online": true, "weight": 100, "version": "v2.3.1", "startupTime": "2026-10-15 10:00:00"}
+    ]
+  },
+  "payment-service": {
+    "prod": [
+      {"ip": "10.3.1.1", "hostname": "pay-01", "status": "HEALTHY", "online": true, "weight": 100, "version": "v5.0.2", "startupTime": "2026-09-20 08:00:00"},
+      {"ip": "10.3.1.2", "hostname": "pay-02", "status": "HEALTHY", "online": true, "weight": 100, "version": "v5.0.2", "startupTime": "2026-09-20 08:00:00"},
+      {"ip": "10.3.1.3", "hostname": "pay-03", "status": "HEALTHY", "online": true, "weight": 100, "version": "v5.0.2", "startupTime": "2026-09-20 08:00:00"},
+      {"ip": "10.3.1.4", "hostname": "pay-04", "status": "HEALTHY", "online": true, "weight": 100, "version": "v5.0.2", "startupTime": "2026-09-20 08:00:00"}
+    ]
+  },
+  "user-service": {
+    "prod": [
+      {"ip": "10.4.1.1", "hostname": "user-01", "status": "HEALTHY", "online": true, "weight": 100, "version": "v3.1.0", "startupTime": "2026-09-01 00:00:00"},
+      {"ip": "10.4.1.2", "hostname": "user-02", "status": "HEALTHY", "online": true, "weight": 100, "version": "v3.1.0", "startupTime": "2026-09-01 00:00:00"},
+      {"ip": "10.4.1.3", "hostname": "user-03", "status": "HEALTHY", "online": true, "weight": 100, "version": "v3.1.0", "startupTime": "2026-09-01 00:00:00"}
+    ],
+    "dev": [
+      {"ip": "10.4.3.7", "hostname": "user-dev-01", "status": "STARTUP_FAILED", "online": false, "weight": 0, "version": "v3.2.0-SNAPSHOT", "startupTime": "-", "note": "启动失败，见启动诊断"}
+    ]
+  },
+  "notify-service": {
+    "prod": [
+      {"ip": "10.5.1.1", "hostname": "notify-01", "status": "HEALTHY", "online": true, "weight": 100, "version": "v1.0.9", "startupTime": "2026-08-15 08:00:00"},
+      {"ip": "10.5.1.2", "hostname": "notify-02", "status": "HEALTHY", "online": true, "weight": 100, "version": "v1.0.9", "startupTime": "2026-08-15 08:00:00"}
+    ]
+  }
+}

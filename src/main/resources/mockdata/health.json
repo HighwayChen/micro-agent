@@ -1,0 +1,28 @@
+{
+  "inventory-service": {
+    "score": 62,
+    "level": "YELLOW",
+    "reportTime": "2026-10-17 10:00:00",
+    "checkItems": [
+      {"name": "接口成功率", "status": "FAIL", "detail": "deduct 接口错误率 12.4%（连续 40 分钟），其中 TimeoutException 占 90%"},
+      {"name": "接口延迟", "status": "FAIL", "detail": "P99 4500ms（阈值 1000ms）"},
+      {"name": "实例健康", "status": "FAIL", "detail": "10.2.3.4 健康检查连续失败 5 次"},
+      {"name": "GC 情况", "status": "PASS", "detail": "FullGC 0 次/小时，YoungGC 23 次/小时属正常"},
+      {"name": "CPU 使用率", "status": "PASS", "detail": "峰值 65%"}
+    ]
+  },
+  "order-service": {
+    "score": 78,
+    "level": "YELLOW",
+    "reportTime": "2026-10-17 10:00:00",
+    "checkItems": [
+      {"name": "接口成功率", "status": "WARN", "detail": "createOrder 错误率 8.2%，报错集中在调用 inventory-service 超时"},
+      {"name": "接口延迟", "status": "WARN", "detail": "P99 3200ms（阈值 1000ms）"},
+      {"name": "实例健康", "status": "PASS", "detail": "3/3 实例健康"},
+      {"name": "GC 情况", "status": "PASS", "detail": "正常"}
+    ]
+  },
+  "payment-service": {"score": 96, "level": "GREEN", "reportTime": "2026-10-17 10:00:00", "checkItems": []},
+  "user-service": {"score": 94, "level": "GREEN", "reportTime": "2026-10-17 10:00:00", "checkItems": []},
+  "notify-service": {"score": 98, "level": "GREEN", "reportTime": "2026-10-17 10:00:00", "checkItems": []}
+}

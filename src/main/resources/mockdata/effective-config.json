@@ -1,0 +1,33 @@
+{
+  "inventory-service": {
+    "10.2.3.4": {
+      "soa.rpc.timeout_ms": "500",
+      "soa.rpc.retries": "2",
+      "db.pool.max_active": "30",
+      "spring.datasource.hikari.maximumPoolSize": "30",
+      "logging.level.root": "INFO"
+    },
+    "10.2.3.5": {
+      "soa.rpc.timeout_ms": "500",
+      "soa.rpc.retries": "2",
+      "db.pool.max_active": "30",
+      "spring.datasource.hikari.maximumPoolSize": "30",
+      "logging.level.root": "INFO"
+    },
+    "10.2.3.6": {
+      "soa.rpc.timeout_ms": "3000",
+      "soa.rpc.retries": "2",
+      "db.pool.max_active": "50",
+      "spring.datasource.hikari.maximumPoolSize": "50",
+      "logging.level.root": "INFO",
+      "_note": "该实例尚未重启，仍持有旧配置"
+    }
+  },
+  "order-service": {
+    "10.1.1.1": {
+      "soa.rpc.timeout_ms": "3000",
+      "order.timeout.scan.batch_size": "1000",
+      "spring.datasource.hikari.maximumPoolSize": "50"
+    }
+  }
+}

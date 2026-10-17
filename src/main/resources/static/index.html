@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>服务治理 AI 助手</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --panel: #ffffff; --border: #e4e7ec; --text: #1f2329;
+    --muted: #8a919f; --accent: #3370ff; --accent-light: #eef3ff;
+    --ok: #2ea44f; --warn: #d4a017; --err: #d93026; --code-bg: #f2f3f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 14px/1.65 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; }
+
+  /* 侧栏 */
+  #sidebar { width: 250px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  #logo { padding: 18px 16px 14px; font-weight: 700; font-size: 16px; border-bottom: 1px solid var(--border); }
+  #logo small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  #new-chat { margin: 12px; padding: 9px; border: 1px solid var(--accent); color: var(--accent); background: var(--accent-light); border-radius: 8px; text-align: center; cursor: pointer; font-weight: 600; }
+  #new-chat:hover { background: var(--accent); color: #fff; }
+  #sessions { flex: 1; overflow-y: auto; padding: 4px 8px; }
+  .session { padding: 8px 10px; border-radius: 8px; cursor: pointer; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .session:hover { background: #f0f2f5; }
+  .session.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+  #agents-intro { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); line-height: 1.9; }
+
+  /* 主区 */
+  #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #topbar { padding: 12px 24px; background: var(--panel); border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  #chat { flex: 1; overflow-y: auto; padding: 24px; }
+  #chat-inner { max-width: 860px; margin: 0 auto; }
+
+  .msg { margin-bottom: 20px; display: flex; flex-direction: column; }
+  .msg.user { align-items: flex-end; }
+  .msg.user .bubble { background: var(--accent); color: #fff; border-radius: 12px 12px 2px 12px; padding: 10px 14px; max-width: 72%; white-space: pre-wrap; }
+  .msg.assistant .meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .agent-badge { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-light); padding: 2px 10px; border-radius: 10px; }
+  .msg.assistant .bubble { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; }
+
+  /* markdown */
+  .md h1, .md h2, .md h3 { margin: 12px 0 6px; font-size: 15px; }
+  .md h1 { font-size: 17px; } .md h2 { font-size: 16px; }
+  .md p { margin: 6px 0; }
+  .md ul, .md ol { margin: 6px 0 6px 22px; }
+  .md li { margin: 2px 0; }
+  .md code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+  .md pre { background: #1e2430; color: #dce3ed; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; }
+  .md pre code { background: none; color: inherit; padding: 0; }
+  .md table { border-collapse: collapse; margin: 8px 0; width: 100%; font-size: 13px; }
+  .md th, .md td { border: 1px solid var(--border); padding: 5px 10px; text-align: left; }
+  .md th { background: #f7f8fa; }
+  .md strong { font-weight: 700; }
+  .md blockquote { border-left: 3px solid var(--accent); padding-left: 10px; color: var(--muted); margin: 6px 0; }
+
+  /* tool 过程 */
+  .tools { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+  details.tool { border: 1px solid var(--border); border-radius: 8px; background: #fafbfc; }
+  details.tool summary { cursor: pointer; padding: 6px 10px; font-size: 13px; display: flex; align-items: center; gap: 8px; list-style: none; }
+  details.tool summary::-webkit-details-marker { display: none; }
+  .tool-icon { color: var(--accent); }
+  .tool-status { margin-left: auto; font-size: 12px; color: var(--muted); }
+  .tool-status.ok { color: var(--ok); } .tool-status.err { color: var(--err); }
+  .tool-body { border-top: 1px dashed var(--border); padding: 8px 10px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 260px; overflow-y: auto; background: #fff; border-radius: 0 0 8px 8px; }
+
+  /* 确认卡片 */
+  .confirm-card { margin-top: 10px; border: 1px solid var(--warn); border-radius: 10px; padding: 12px 14px; background: #fffaf0; }
+  .confirm-card .title { font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .confirm-card .risk { font-size: 13px; color: var(--warn); margin: 4px 0 10px; }
+  .confirm-card .btns { display: flex; gap: 10px; }
+  .confirm-card button { padding: 6px 18px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; font-size: 13px; background: #fff; }
+  .confirm-card button.primary { background: var(--warn); border-color: var(--warn); color: #fff; font-weight: 600; }
+  .confirm-card button:disabled { opacity: .5; cursor: not-allowed; }
+  .confirm-card .receipt { margin-top: 10px; font-size: 13px; padding: 8px; border-radius: 6px; display: none; white-space: pre-wrap; }
+  .confirm-card .receipt.ok { display: block; background: #eef7ef; color: var(--ok); }
+  .confirm-card .receipt.err { display: block; background: #fdecea; color: var(--err); }
+
+  /* 反馈 */
+  .actions { margin-top: 6px; display: none; gap: 6px; }
+  .actions button { border: 1px solid var(--border); background: none; border-radius: 6px; cursor: pointer; padding: 2px 8px; font-size: 13px; }
+  .actions button.on { background: var(--accent-light); border-color: var(--accent); }
+  .actions.show { display: flex; }
+
+  /* 输入区 */
+  #input-bar { padding: 14px 24px 20px; background: var(--panel); border-top: 1px solid var(--border); }
+  #input-wrap { max-width: 860px; margin: 0 auto; display: flex; gap: 10px; align-items: flex-end; }
+  #input { flex: 1; resize: none; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font: inherit; max-height: 140px; outline: none; }
+  #input:focus { border-color: var(--accent); }
+  #send { padding: 10px 22px; background: var(--accent); border: none; color: #fff; border-radius: 10px; cursor: pointer; font-weight: 600; }
+  #send:disabled { opacity: .5; cursor: not-allowed; }
+  #hint { max-width: 860px; margin: 6px auto 0; font-size: 12px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; }
+  .example { cursor: pointer; color: var(--accent); }
+
+  .cursor-blink::after { content: "▍"; color: var(--accent); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .typing { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div id="logo">治理平台 AI 助手<small>Multi-Agent · Tool Calling · 人工确认</small></div>
+  <div id="new-chat">＋ 新对话</div>
+  <div id="sessions"></div>
+  <div id="agents-intro">
+    <b>Agent 能力</b><br>
+    💬 FAQ 知识库 · 平台使用问题<br>
+    📊 治理数据 · 服务/实例/拓扑/指标<br>
+    🔍 故障诊断 · 根因定位 + 止血<br>
+    🖥 实例内省 · dump/配置/JVM
+  </div>
+</div>
+<div id="main">
+  <div id="topbar">API 集市 · AI 助手</div>
+  <div id="chat"><div id="chat-inner"></div></div>
+  <div id="input-bar">
+    <div id="input-wrap">
+      <textarea id="input" rows="1" placeholder="例如：订单服务为什么超时？（Enter 发送 / Shift+Enter 换行）"></textarea>
+      <button id="send">发送</button>
+    </div>
+    <div id="hint">
+      <span class="example" data-q="订单服务为什么超时？">订单服务为什么超时？</span>
+      <span class="example" data-q="库存服务 prod 环境有哪些实例？">库存服务有哪些实例？</span>
+      <span class="example" data-q="Apollo 配置发布后多久生效？">Apollo 配置多久生效？</span>
+      <span class="example" data-q="分析一下库存服务的线程 dump">分析线程 dump</span>
+      <span class="example" data-q="把库存服务 prod 的 10.2.3.4 摘除流量">摘除异常实例流量</span>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = sel => document.querySelector(sel);
+const chatInner = $("#chat-inner"), input = $("#input"), sendBtn = $("#send");
+const state = { sessionId: null, streaming: false, lastMessageId: null };
+
+/* ---------- 极简 markdown 渲染（无外部依赖） ---------- */
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function inlineMd(s) {
+  s = escapeHtml(s);
+  s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  return s;
+}
+function mdToHtml(md) {
+  if (!md) return "";
+  const lines = md.split("\n");
+  let html = [], inCode = false, listType = null, tableRows = [];
+  const flushList = () => { if (listType) { html.push(`</${listType}>`); listType = null; } };
+  const flushTable = () => {
+    if (!tableRows.length) return;
+    const rows = tableRows.filter(r => !/^\|[\s:|-]+\|$/.test(r.trim()));
+    html.push("<table>");
+    rows.forEach((r, i) => {
+      const cells = r.split("|").slice(1, -1).map(c => c.trim());
+      html.push("<tr>" + cells.map(c => `<${i === 0 ? "th" : "td"}>${inlineMd(c)}</${i === 0 ? "th" : "td"}>`).join("") + "</tr>");
+    });
+    html.push("</table>");
+    tableRows = [];
+  };
+  for (const line of lines) {
+    if (line.trim().startsWith("```")) {
+      flushList(); flushTable();
+      if (inCode) { html.push("</code></pre>"); inCode = false; }
+      else { html.push("<pre><code>"); inCode = true; }
+      continue;
+    }
+    if (inCode) { html.push(escapeHtml(line)); continue; }
+    if (/^\s*\|.*\|\s*$/.test(line)) { flushList(); tableRows.push(line); continue; }
+    flushTable();
+    const h = line.match(/^(#{1,3})\s+(.*)/);
+    const ul = line.match(/^\s*[-*]\s+(.*)/);
+    const ol = line.match(/^\s*\d+\.\s+(.*)/);
+    if (h) { flushList(); html.push(`<h${h[1].length}>${inlineMd(h[2])}</h${h[1].length}>`); }
+    else if (ul) { if (listType !== "ul") { flushList(); html.push("<ul>"); listType = "ul"; } html.push(`<li>${inlineMd(ul[1])}</li>`); }
+    else if (ol) { if (listType !== "ol") { flushList(); html.push("<ol>"); listType = "ol"; } html.push(`<li>${inlineMd(ol[1])}</li>`); }
+    else if (line.trim() === "") { flushList(); html.push(""); }
+    else { flushList(); html.push(`<p>${inlineMd(line)}</p>`); }
+  }
+  flushList(); flushTable();
+  if (inCode) html.push("</code></pre>");
+  return html.join("");
+}
+
+/* ---------- 消息渲染 ---------- */
+function addUserMsg(text) {
+  const div = document.createElement("div");
+  div.className = "msg user";
+  div.innerHTML = `<div class="bubble"></div>`;
+  div.querySelector(".bubble").textContent = text;
+  chatInner.appendChild(div);
+  scrollBottom();
+}
+
+function addAssistantTurn() {
+  const turn = document.createElement("div");
+  turn.className = "msg assistant";
+  turn.innerHTML = `
+    <div class="meta"><span class="agent-badge">路由中…</span></div>
+    <div class="bubble">
+      <div class="md content typing">思考中…</div>
+      <div class="tools"></div>
+      <div class="confirm-cards"></div>
+      <div class="actions">
+        <button data-fb="1" title="有帮助">👍</button>
+        <button data-fb="-1" title="没帮助">👎</button>
+      </div>
+    </div>`;
+  chatInner.appendChild(turn);
+  scrollBottom();
+  return {
+    root: turn,
+    badge: turn.querySelector(".agent-badge"),
+    content: turn.querySelector(".content"),
+    tools: turn.querySelector(".tools"),
+    cards: turn.querySelector(".confirm-cards"),
+    actions: turn.querySelector(".actions"),
+    raw: ""
+  };
+}
+
+function addToolChip(toolsEl, ev) {
+  const det = document.createElement("details");
+  det.className = "tool";
+  det.dataset.callId = ev.toolCallId || ev.toolName;
+  det.innerHTML = `
+    <summary><span class="tool-icon">⚙</span><span class="tool-name">${ev.toolName}</span>
+      <span class="tool-status">执行中…</span></summary>
+    <div class="tool-body">入参：${escapeHtml(ev.argsPreview || "")}</div>`;
+  toolsEl.appendChild(det);
+  scrollBottom();
+  return det;
+}
+
+function addConfirmCard(cardsEl, ev) {
+  const card = document.createElement("div");
+  card.className = "confirm-card";
+  card.dataset.opId = ev.opId;
+  card.innerHTML = `
+    <div class="title">⚠️ 写操作待确认（<span class="op-tool">${ev.toolName}</span>）</div>
+    <div class="summary"></div>
+    <div class="risk">风险：${escapeHtml(ev.riskDesc || "-")}</div>
+    <div class="btns"><button class="primary">确认执行</button><button class="cancel">取消</button></div>
+    <div class="receipt"></div>`;
+  card.querySelector(".summary").textContent = ev.summary || "";
+  const [okBtn, cancelBtn] = card.querySelectorAll("button");
+  const receipt = card.querySelector(".receipt");
+  okBtn.onclick = async () => {
+    okBtn.disabled = cancelBtn.disabled = true;
+    receipt.className = "receipt";
+    receipt.textContent = "执行中…";
+    try {
+      const resp = await fetch(`/api/confirm/${ev.opId}`, { method: "POST" });
+      const data = await resp.json();
+      if (resp.ok && data.status === "SUCCESS") {
+        receipt.className = "receipt ok";
+        receipt.textContent = "✅ 执行成功：\n" + data.result;
+      } else {
+        receipt.className = "receipt err";
+        receipt.textContent = "❌ " + (data.error || data.result || data.status);
+      }
+    } catch (e) {
+      receipt.className = "receipt err";
+      receipt.textContent = "❌ " + e.message;
+    }
+  };
+  cancelBtn.onclick = async () => {
+    okBtn.disabled = cancelBtn.disabled = true;
+    try {
+      const resp = await fetch(`/api/confirm/${ev.opId}`, { method: "DELETE" });
+      const data = await resp.json();
+      receipt.className = "receipt ok";
+      receipt.textContent = "已取消（" + (data.status || "CANCELLED") + "）";
+    } catch (e) {
+      receipt.className = "receipt err";
+      receipt.textContent = "❌ " + e.message;
+    }
+  };
+  cardsEl.appendChild(card);
+  scrollBottom();
+}
+
+function scrollBottom() {
+  const chat = $("#chat");
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* ---------- SSE 流 ---------- */
+async function sendMessage(text) {
+  if (state.streaming || !text.trim()) return;
+  state.streaming = true;
+  sendBtn.disabled = true;
+  addUserMsg(text);
+
+  const turn = addAssistantTurn();
+  let raw = "";
+  let sawToken = false;
+  const toolChips = new Map();
+
+  try {
+    const resp = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, sessionId: state.sessionId })
+    });
+    if (!resp.ok || !resp.body) throw new Error("HTTP " + resp.status);
+    await readSse(resp.body, (eventName, data) => {
+      switch (eventName) {
+        case "message_start":
+          turn.badge.textContent = data.agentName || data.agentId || "";
+          break;
+        case "token":
+          if (!sawToken) { turn.content.classList.remove("typing"); sawToken = true; }
+          raw += data.delta || "";
+          turn.content.innerHTML = mdToHtml(raw);
+          turn.content.classList.add("cursor-blink");
+          scrollBottom();
+          break;
+        case "tool_call": {
+          if (!sawToken) { turn.content.classList.remove("typing"); turn.content.innerHTML = "<i class='typing'>（先调用工具收集信息）</i>"; }
+          const chip = addToolChip(turn.tools, data);
+          toolChips.set(data.toolCallId || data.toolName, chip);
+          break;
+        }
+        case "tool_result": {
+          const chip = toolChips.get(data.toolCallId) || toolChips.get(data.toolName);
+          if (chip) {
+            const status = chip.querySelector(".tool-status");
+            status.textContent = (data.ok ? "✓ " : "✗ ") + (data.costMs != null ? data.costMs + "ms" : "失败");
+            status.className = "tool-status " + (data.ok ? "ok" : "err");
+            chip.querySelector(".tool-body").textContent =
+              "入参：" + (data.argsPreview || "(见摘要)") + "\n\n结果：" + (data.preview || "");
+          }
+          break;
+        }
+        case "confirm_required":
+          addConfirmCard(turn.cards, data);
+          break;
+        case "error":
+          turn.content.classList.remove("typing");
+          raw += (raw ? "\n\n" : "") + "❌ " + (data.message || "未知错误");
+          turn.content.innerHTML = mdToHtml(raw);
+          break;
+        case "done":
+          state.lastMessageId = data.messageId;
+          if (data.messageId) turn.actions.classList.add("show");
+          break;
+      }
+    });
+    turn.content.classList.remove("cursor-blink", "typing");
+    if (!sawToken && !raw) turn.content.innerHTML = "<i class='typing'>（无输出）</i>";
+    turn.actions.querySelectorAll("button").forEach(btn => {
+      btn.onclick = async () => {
+        turn.actions.querySelectorAll("button").forEach(b => b.classList.remove("on"));
+        btn.classList.add("on");
+        await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messageId: state.lastMessageId, score: +btn.dataset.fb })
+        }).catch(() => {});
+      };
+    });
+  } catch (e) {
+    turn.content.classList.remove("typing");
+    turn.content.innerHTML = mdToHtml("❌ 连接失败：" + e.message);
+  } finally {
+    state.streaming = false;
+    sendBtn.disabled = false;
+    refreshSessions();
+  }
+}
+
+async function readSse(body, onEvent) {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let idx;
+    while ((idx = buffer.indexOf("\n\n")) >= 0) {
+      const block = buffer.slice(0, idx);
+      buffer = buffer.slice(idx + 2);
+      let eventName = "message", dataLines = [];
+      for (const line of block.split("\n")) {
+        if (line.startsWith("event:")) eventName = line.slice(6).trim();
+        else if (line.startsWith("data:")) dataLines.push(line.slice(5).trim());
+      }
+      if (dataLines.length) {
+        try { onEvent(eventName, JSON.parse(dataLines.join("\n"))); }
+        catch (e) { console.warn("SSE 解析失败", block, e); }
+      }
+    }
+  }
+}
+
+/* ---------- 会话管理 ---------- */
+async function refreshSessions() {
+  try {
+    const sessions = await (await fetch("/api/sessions?username=demo")).json();
+    const box = $("#sessions");
+    box.innerHTML = "";
+    sessions.forEach(s => {
+      const div = document.createElement("div");
+      div.className = "session" + (s.id === state.sessionId ? " active" : "");
+      div.textContent = "💬 " + (s.title || "新对话");
+      div.onclick = () => loadSession(s.id);
+      box.appendChild(div);
+    });
+  } catch (e) { /* 忽略 */ }
+}
+
+async function loadSession(id) {
+  if (state.streaming) return;
+  state.sessionId = id;
+  chatInner.innerHTML = "";
+  try {
+    const messages = await (await fetch(`/api/sessions/${id}/messages`)).json();
+    let turn = null;
+    for (const m of messages) {
+      if (m.role === "user") {
+        addUserMsg(m.content);
+        turn = null;
+      } else if (m.role === "assistant") {
+        turn = addAssistantTurn();
+        turn.badge.textContent = "历史回答";
+        turn.content.classList.remove("typing");
+        turn.content.innerHTML = mdToHtml(m.content || "");
+      } else if (m.role === "tool" && turn) {
+        const chip = document.createElement("details");
+        chip.className = "tool";
+        chip.innerHTML = `<summary><span class="tool-icon">⚙</span><span>${m.toolName}</span>
+          <span class="tool-status">历史</span></summary>
+          <div class="tool-body">${escapeHtml((m.content || "").slice(0, 800))}</div>`;
+        turn.tools.appendChild(chip);
+      }
+    }
+    if (!messages.length) addUserEmptyHint();
+  } catch (e) { /* 忽略 */ }
+  refreshSessions();
+  scrollBottom();
+}
+
+function addUserEmptyHint() {
+  const div = document.createElement("div");
+  div.className = "msg assistant";
+  div.innerHTML = `<div class="bubble"><div class="md content">
+    <h2>你好，我是治理平台 AI 助手 👋</h2>
+    <p>试试这些问题：</p>
+    <ul>
+      <li><b>故障诊断</b>：订单服务为什么超时？</li>
+      <li><b>数据查询</b>：库存服务 prod 有哪些实例？</li>
+      <li><b>FAQ</b>：Apollo 配置发布后多久生效？</li>
+      <li><b>实例内省</b>：分析一下库存服务的线程 dump</li>
+      <li><b>写操作</b>（会要求确认）：把库存服务 prod 的 10.2.3.4 摘除流量</li>
+    </ul></div></div>`;
+  chatInner.appendChild(div);
+}
+
+/* ---------- 初始化 ---------- */
+$("#new-chat").onclick = () => {
+  if (state.streaming) return;
+  state.sessionId = null;
+  chatInner.innerHTML = "";
+  addUserEmptyHint();
+  refreshSessions();
+  input.focus();
+};
+sendBtn.onclick = () => { sendMessage(input.value); input.value = ""; input.style.height = "auto"; };
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendBtn.click(); }
+});
+input.addEventListener("input", () => {
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 140) + "px";
+});
+document.querySelectorAll(".example").forEach(el => {
+  el.onclick = () => { input.value = el.dataset.q; sendBtn.click(); };
+});
+
+addUserEmptyHint();
+refreshSessions();
+</script>
+</body>
+</html>

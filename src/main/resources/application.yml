@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gov-agent-platform
+  mvc:
+    async:
+      request-timeout: 600000
+
+agent:
+  # LLM（任意 OpenAI 兼容网关：one-api / vLLM / DashScope / DeepSeek 等）
+  llm:
+    enabled: ${AGENT_LLM_ENABLED:true}
+    base-url: ${AGENT_LLM_BASE_URL:https://api.openai.com}
+    api-key: ${AGENT_LLM_API_KEY:}
+    model: ${AGENT_LLM_MODEL:gpt-4o-mini}
+    # 意图路由用的模型（留空则与主模型相同，可配便宜模型）
+    router-model: ${AGENT_LLM_ROUTER_MODEL:}
+    temperature: 0.2
+    max-tokens: 4096
+    connect-timeout-ms: 10000
+    read-timeout-ms: 300000
+  # 会话上下文：保留最近 N 轮
+  history-rounds: 8
+  # 单次对话 ReAct 循环（LLM 调 tool）最大轮数
+  max-loop-rounds: 8
+  # tool 结果注入上下文前的最大字节数（超出截断）
+  result-max-bytes: 4096
+  # 写操作预案确认 TTL（秒）
+  confirm-ttl-seconds: 600
+  # 允许执行写操作的角色（demo 环界单用户，默认放行 admin）
+  write-roles: admin
+
+logging:
+  level:
+    com.govagent: DEBUG

@@ -1,0 +1,25 @@
+{
+  "order-service": {
+    "qps": 1240,
+    "errorRate": "8.2%",
+    "p99Ms": 3200,
+    "p99ThresholdMs": 1000,
+    "alerts": [
+      "【P1】createOrder 接口错误率 8.2% 持续 40 分钟，大量调用 inventory-service 超时（TimeoutException）",
+      "【P2】超时关单任务积压 2300 单"
+    ]
+  },
+  "inventory-service": {
+    "qps": 980,
+    "errorRate": "12.4%",
+    "p99Ms": 4500,
+    "p99ThresholdMs": 1000,
+    "alerts": [
+      "【P1】deduct 接口 P99 4500ms，错误率 12.4%，TimeoutException 占 90%",
+      "【P1】实例 10.2.3.4 健康检查连续失败 5 次"
+    ]
+  },
+  "payment-service": {"qps": 620, "errorRate": "0.1%", "p99Ms": 320, "p99ThresholdMs": 1000, "alerts": []},
+  "user-service": {"qps": 1500, "errorRate": "0.2%", "p99Ms": 85, "p99ThresholdMs": 500, "alerts": []},
+  "notify-service": {"qps": 22, "errorRate": "0.0%", "p99Ms": 110, "p99ThresholdMs": 1000, "alerts": []}
+}

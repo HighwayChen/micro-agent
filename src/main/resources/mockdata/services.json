@@ -1,0 +1,49 @@
+{
+  "services": [
+    {
+      "serviceId": "order-service",
+      "name": "订单服务",
+      "owner": "交易组 / zhangsan",
+      "language": "JAVA",
+      "envs": ["prod", "stage", "dev"],
+      "instanceCount": {"prod": 3, "stage": 1, "dev": 2},
+      "description": "订单核心服务：下单、查单、取消、超时关单"
+    },
+    {
+      "serviceId": "inventory-service",
+      "name": "库存服务",
+      "owner": "供应链组 / lisi",
+      "language": "JAVA",
+      "envs": ["prod", "stage", "dev"],
+      "instanceCount": {"prod": 3, "stage": 1, "dev": 1},
+      "description": "库存扣减/回补/盘点，强依赖 MySQL"
+    },
+    {
+      "serviceId": "payment-service",
+      "name": "支付服务",
+      "owner": "资金组 / wangwu",
+      "language": "JAVA",
+      "envs": ["prod", "stage"],
+      "instanceCount": {"prod": 4, "stage": 1},
+      "description": "统一支付网关，对接多个支付渠道"
+    },
+    {
+      "serviceId": "user-service",
+      "name": "用户服务",
+      "owner": "用户组 / zhaoliu",
+      "language": "JAVA",
+      "envs": ["prod", "stage", "dev"],
+      "instanceCount": {"prod": 3, "stage": 1, "dev": 1},
+      "description": "用户信息、登录态、会员"
+    },
+    {
+      "serviceId": "notify-service",
+      "name": "通知服务",
+      "owner": "基础架构组 / sunqi",
+      "language": "JAVA",
+      "envs": ["prod"],
+      "instanceCount": {"prod": 2},
+      "description": "短信/邮件/企微消息推送"
+    }
+  ]
+}

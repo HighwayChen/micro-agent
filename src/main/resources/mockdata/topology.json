@@ -1,0 +1,51 @@
+{
+  "order-service": {
+    "dependsOn": [
+      {"serviceId": "inventory-service", "protocol": "SOA-RPC", "callsPerSec": 320, "note": "下单主链路"},
+      {"serviceId": "payment-service", "protocol": "SOA-RPC", "callsPerSec": 150},
+      {"serviceId": "user-service", "protocol": "SOA-RPC", "callsPerSec": 410},
+      {"serviceId": "notify-service", "protocol": "MQ", "callsPerSec": 22}
+    ],
+    "dependedBy": [
+      {"serviceId": "api-gateway", "protocol": "HTTP"},
+      {"serviceId": "crm-service", "protocol": "SOA-RPC"}
+    ]
+  },
+  "inventory-service": {
+    "dependsOn": [
+      {"serviceId": "MySQL.inventory", "protocol": "JDBC", "note": "库存库，2C4G×4 节点"},
+      {"serviceId": "redis-cache", "protocol": "REDIS", "note": "热点库存缓存"}
+    ],
+    "dependedBy": [
+      {"serviceId": "order-service", "protocol": "SOA-RPC", "callsPerSec": 320},
+      {"serviceId": "report-service", "protocol": "SOA-RPC", "callsPerSec": 35}
+    ]
+  },
+  "payment-service": {
+    "dependsOn": [
+      {"serviceId": "MySQL.payment", "protocol": "JDBC"},
+      {"serviceId": "channel-gateway", "protocol": "HTTP", "note": "第三方支付渠道"}
+    ],
+    "dependedBy": [
+      {"serviceId": "order-service", "protocol": "SOA-RPC", "callsPerSec": 150}
+    ]
+  },
+  "user-service": {
+    "dependsOn": [
+      {"serviceId": "MySQL.user", "protocol": "JDBC"}
+    ],
+    "dependedBy": [
+      {"serviceId": "order-service", "protocol": "SOA-RPC", "callsPerSec": 410},
+      {"serviceId": "crm-service", "protocol": "SOA-RPC"}
+    ]
+  },
+  "notify-service": {
+    "dependsOn": [
+      {"serviceId": "wechat-api", "protocol": "HTTP"},
+      {"serviceId": "sms-vendor", "protocol": "HTTP"}
+    ],
+    "dependedBy": [
+      {"serviceId": "order-service", "protocol": "MQ"}
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "changes": [
+    {
+      "serviceId": "inventory-service",
+      "env": "prod",
+      "namespace": "SOA.RPC",
+      "key": "soa.rpc.timeout_ms",
+      "oldValue": "3000",
+      "newValue": "500",
+      "operator": "lisi",
+      "time": "2026-10-17 08:10:00（2 小时前）",
+      "releaseTitle": "库存接口超时时间调优",
+      "note": "改小了 RPC 超时时间，与报错时间点吻合"
+    },
+    {
+      "serviceId": "inventory-service",
+      "env": "prod",
+      "namespace": "DB.POOL",
+      "key": "db.pool.max_active",
+      "oldValue": "50",
+      "newValue": "30",
+      "operator": "lisi",
+      "time": "2026-10-17 08:12:00（2 小时前）",
+      "releaseTitle": "库存接口超时时间调优",
+      "note": "连接池同时改小"
+    },
+    {
+      "serviceId": "order-service",
+      "env": "prod",
+      "namespace": "BIZ",
+      "key": "order.timeout.scan.batch_size",
+      "oldValue": "500",
+      "newValue": "1000",
+      "operator": "zhangsan",
+      "time": "2026-10-10 14:00:00（一周前）",
+      "releaseTitle": "超时关单扫描批量调整",
+      "note": ""
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "logs": [
+    {
+      "time": "2026-10-17 08:30:00（今天上午）",
+      "operator": "lisi",
+      "action": "RELEASE",
+      "target": "inventory-service",
+      "detail": "发布 v2.3.1 到 prod 全量（3 实例），内容：库存扣减逻辑重构（新增防超卖校验，含多次 DB 读写）",
+      "result": "SUCCESS"
+    },
+    {
+      "time": "2026-10-17 08:10:00",
+      "operator": "lisi",
+      "action": "CONFIG_CHANGE",
+      "target": "inventory-service",
+      "detail": "Apollo 发布「库存接口超时时间调优」：timeout_ms 3000→500、db.pool.max_active 50→30",
+      "result": "SUCCESS"
+    },
+    {
+      "time": "2026-10-09 11:20:00",
+      "operator": "zhangsan",
+      "action": "RESTART",
+      "target": "order-service",
+      "detail": "重启 10.1.1.3（例行发布）",
+      "result": "SUCCESS"
+    },
+    {
+      "time": "2026-09-28 10:00:00",
+      "operator": "lisi",
+      "action": "RELEASE",
+      "target": "inventory-service",
+      "detail": "发布 v2.3.0 到 prod",
+      "result": "SUCCESS"
+    }
+  ]
+}
